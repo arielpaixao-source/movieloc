@@ -1,0 +1,11 @@
+{
+    "name": "dupla/movieloc",
+    "description": "Sistema de Locadora de Filmes - PHP Full Stack",
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/",
+            "Config\\": "config/"
+        }
+    },
+    "require": {}
+}
