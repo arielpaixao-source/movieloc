@@ -4,110 +4,126 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MovieLoc - Gerenciamento de Clientes</title>
+    
+    <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body class="bg-light">
-    <!-- Navbar de Navegação -->
-   <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
-    <div class="container">
-        <a class="navbar-brand fw-bold" href="index.php">🎬 MovieLoc</a>
-        <div class="navbar-nav me-auto">
-            <a class="nav-link" href="index.php?page=filmes">Filmes</a>
-            <a class="nav-link active" href="index.php?page=clientes">Clientes</a>
-            <a class="nav-link" href="index.php?page=locacoes">Locações</a>
+
+    <!-- Navbar Padronizada -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark py-3">
+        <div class="container">
+            <a class="navbar-brand fw-bold fs-4 text-white" href="index.php">
+                🎬 MovieLoc
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto ms-lg-4">
+                    <li class="nav-item">
+                        <a class="nav-link text-white-50" href="index.php?page=filmes">Filmes</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white fw-bold" href="index.php?page=clientes">Clientes</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white-50" href="index.php?page=locacoes">Locações</a>
+                    </li>
+                </ul>
+                <div class="d-flex align-items-center gap-3">
+                    <span class="text-light small">Olá, <strong><?= htmlspecialchars($_SESSION['usuario']['nome'] ?? '') ?></strong></span>
+                    <a href="index.php?page=logout" class="btn btn-outline-danger btn-sm px-3">Sair</a>
+                </div>
+            </div>
         </div>
-        <div class="navbar-nav">
-            <span class="nav-link text-light me-2">Olá, <?= htmlspecialchars($_SESSION['usuario']['nome'] ?? '') ?></span>
-            <a class="btn btn-outline-danger btn-sm" href="index.php?page=logout">Sair</a>
-        </div>
-    </div>
-</nav>
+    </nav>
 
     <div class="container my-4">
-        <h1 class="mb-4 text-center text-primary">👤 MovieLoc - Gerenciamento de Clientes</h1>
+        <!-- Título com Ícone de Claquete -->
+        <h1 class="mb-4 text-center fw-bold text-primary display-5">🎬 MovieLoc - Gerenciamento de Clientes</h1>
 
-        <div class="card mb-5 shadow-sm">
-            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-                <h5 class="mb-0"><?= isset($clienteEdicao) ? 'Editar Cliente' : 'Cadastrar Novo Cliente' ?></h5>
-                <?php if (isset($clienteEdicao)): ?>
-                    <a href="index.php?page=clientes" class="btn btn-sm btn-light">Cancelar Edição</a>
-                <?php endif; ?>
+        <!-- Formulário com Cabeçalho Azul -->
+        <div class="card shadow-sm mb-4 border-0">
+            <div class="card-header bg-primary text-white fw-bold py-3 fs-5">
+                Cadastrar Novo Cliente
             </div>
-            <div class="card-body">
+            <div class="card-body p-4">
                 <form action="index.php?page=clientes&action=cadastrar" method="POST" class="row g-3">
-                    <?php if (isset($clienteEdicao)): ?>
-                        <input type="hidden" name="id" value="<?= $clienteEdicao['id'] ?>">
-                    <?php endif; ?>
-
-                    <div class="col-md-4">
-                        <label class="form-label">Nome Completo</label>
-                        <input type="text" name="nome" class="form-control" required placeholder="Ex: João Silva" value="<?= $clienteEdicao['nome'] ?? '' ?>">
+                    <div class="col-md-3">
+                        <label class="form-label fw-semibold">Nome Completo</label>
+                        <input type="text" name="nome" class="form-control" maxlength="60" required placeholder="Ex: Ariel França">
                     </div>
                     <div class="col-md-3">
-                        <label class="form-label">CPF</label>
-                        <input type="text" name="cpf" class="form-control" required placeholder="000.000.000-00" value="<?= $clienteEdicao['cpf'] ?? '' ?>">
-                    </div>
-                    <div class="col-md-2">
-                        <label class="form-label">Telefone</label>
-                        <input type="text" name="telefone" class="form-control" required placeholder="(71) 99999-9999" value="<?= $clienteEdicao['telefone'] ?? '' ?>">
+                        <label class="form-label fw-semibold">CPF (11 dígitos)</label>
+                        <input type="text" name="cpf" class="form-control" maxlength="11" minlength="11" pattern="\d{11}" inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9]/g, '')" required placeholder="Apenas números">
                     </div>
                     <div class="col-md-3">
-                        <label class="form-label">E-mail</label>
-                        <input type="email" name="email" class="form-control" placeholder="joao@email.com" value="<?= $clienteEdicao['email'] ?? '' ?>">
+                        <label class="form-label fw-semibold">Telefone (DDD + Número)</label>
+                        <input type="text" name="telefone" class="form-control" maxlength="11" minlength="10" pattern="\d{10,11}" inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9]/g, '')" required placeholder="Ex: 71999998888">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label fw-semibold">E-mail</label>
+                        <input type="email" name="email" class="form-control" maxlength="80" required placeholder="nome@exemplo.com">
                     </div>
                     <div class="col-12 text-end">
-                        <button type="submit" class="btn btn-<?= isset($clienteEdicao) ? 'warning' : 'success' ?>">
-                            <?= isset($clienteEdicao) ? 'Atualizar Cliente' : 'Salvar Cliente' ?>
+                        <button type="submit" class="btn btn-success px-4 fw-semibold">
+                            Salvar Cliente
                         </button>
                     </div>
                 </form>
             </div>
         </div>
 
-        <div class="card shadow-sm">
-            <div class="card-header bg-secondary text-white">
-                <h5 class="mb-0">Clientes Cadastrados</h5>
+        <!-- Tabela Escura Padronizada -->
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-secondary text-white fw-bold py-3 fs-5">
+                Clientes Cadastrados
             </div>
             <div class="card-body p-0">
-                <table class="table table-hover mb-0">
-                    <thead class="table-dark">
-                        <tr>
-                            <th>ID</th>
-                            <th>Nome</th>
-                            <th>CPF</th>
-                            <th>Telefone</th>
-                            <th>E-mail</th>
-                            <th class="text-center">Ações</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php if (empty($clientes)): ?>
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-dark">
                             <tr>
-                                <td colspan="6" class="text-center py-3">Nenhum cliente cadastrado ainda.</td>
+                                <th class="ps-3">ID</th>
+                                <th>Nome</th>
+                                <th>CPF</th>
+                                <th>Telefone</th>
+                                <th>E-mail</th>
+                                <th class="text-end pe-3">Ações</th>
                             </tr>
-                        <?php else: ?>
-                            <?php foreach ($clientes as $cliente): ?>
+                        </thead>
+                        <tbody>
+                            <?php if (!empty($clientes)): ?>
+                                <?php foreach ($clientes as $cliente): ?>
+                                    <tr>
+                                        <td class="ps-3 fw-bold text-secondary">#<?= $cliente['id'] ?></td>
+                                        <td class="fw-semibold"><?= htmlspecialchars($cliente['nome']) ?></td>
+                                        <td><?= htmlspecialchars($cliente['cpf']) ?></td>
+                                        <td><?= htmlspecialchars($cliente['telefone']) ?></td>
+                                        <td><?= htmlspecialchars($cliente['email']) ?></td>
+                                        <td class="text-end pe-3">
+                                            <a href="index.php?page=clientes&action=excluir&id=<?= $cliente['id'] ?>" class="btn btn-danger btn-sm fw-semibold" onclick="return confirm('Deseja realmente excluir este cliente?')">
+                                                Excluir
+                                            </a>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            <?php else: ?>
                                 <tr>
-                                    <td><?= $cliente['id'] ?></td>
-                                    <td><?= htmlspecialchars($cliente['nome']) ?></td>
-                                    <td><?= htmlspecialchars($cliente['cpf']) ?></td>
-                                    <td><?= htmlspecialchars($cliente['telefone']) ?></td>
-                                    <td><?= htmlspecialchars($cliente['email'] ?? '-') ?></td>
-                                    <td class="text-center">
-                                        <a href="index.php?page=clientes&editar_id=<?= $cliente['id'] ?>" class="btn btn-sm btn-warning me-1">Editar</a>
-                                        <a href="index.php?page=clientes&action=excluir&id=<?= $cliente['id'] ?>" 
-                                           class="btn btn-sm btn-danger" 
-                                           onclick="return confirm('Tem certeza que deseja excluir este cliente?')">
-                                           Excluir
-                                        </a>
-                                    </td>
+                                    <td colspan="6" class="text-center py-4 text-muted">Nenhum cliente cadastrado.</td>
                                 </tr>
-                            <?php endforeach; ?>
-                        <?php endif; ?>
-                    </tbody>
-                </table>
+                            <?php endif; ?>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
+
+    <!-- Script JS Bootstrap -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

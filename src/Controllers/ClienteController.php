@@ -9,31 +9,36 @@ class ClienteController
     public function index() 
     {
         $clientes = Cliente::listarTodos();
-        $clienteEdicao = null;
-
-        if (isset($_GET['editar_id'])) {
-            $clienteEdicao = Cliente::buscarPorId($_GET['editar_id']);
-        }
-
         require_once __DIR__ . '/../Views/clientes/index.php';
     }
 
     public function cadastrar() 
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $id = $_POST['id'] ?? null;
-            $nome = $_POST['nome'] ?? '';
-            $cpf = $_POST['cpf'] ?? '';
-            $telefone = $_POST['telefone'] ?? '';
-            $email = $_POST['email'] ?? '';
+            $nome = trim($_POST['nome'] ?? '');
+            $cpf = preg_replace('/[^0-9]/', '', $_POST['cpf'] ?? '');
+            $telefone = preg_replace('/[^0-9]/', '', $_POST['telefone'] ?? '');
+            $email = filter_var(trim($_POST['email'] ?? ''), FILTER_VALIDATE_EMAIL);
 
-            if (!empty($nome) && !empty($cpf)) {
-                if ($id) {
-                    Cliente::atualizar($id, $nome, $cpf, $telefone, $email);
-                } else {
-                    Cliente::salvar($nome, $cpf, $telefone, $email);
-                }
+            // Validações no backend
+            if (strlen($nome) < 3 || strlen($nome) > 60) {
+                die("Erro: O nome deve ter entre 3 e 60 caracteres.");
             }
+
+            if (strlen($cpf) !== 11) {
+                die("Erro: O CPF deve conter exatamente 11 dígitos numéricos.");
+            }
+
+            if (strlen($telefone) < 10 || strlen($telefone) > 11) {
+                die("Erro: O telefone deve conter 10 ou 11 dígitos numéricos.");
+            }
+
+            if (!$email || strlen($email) > 80) {
+                die("Erro: Insira um endereço de e-mail válido.");
+            }
+
+            // Executa o cadastro com os dados protegidos
+            Cliente::cadastrar($nome, $cpf, $telefone, $email);
             header('Location: index.php?page=clientes');
             exit;
         }

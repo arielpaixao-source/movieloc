@@ -12,7 +12,7 @@ use App\Controllers\AuthController;
 $page = $_GET['page'] ?? 'filmes';
 $action = $_GET['action'] ?? 'index';
 
-// Rotas públicas (não exigem login)
+// 1. Rotas Públicas + Logout (Sempre acessíveis sem checar sessão)
 if ($page === 'login') {
     (new AuthController())->login();
     exit;
@@ -24,13 +24,13 @@ if ($page === 'login') {
     exit;
 }
 
-// Trava de segurança: Se não estiver logado, redireciona para a tela de Login
+// 2. Trava de segurança: Se não estiver logado, obriga a ir para a tela de Login
 if (!isset($_SESSION['usuario'])) {
     header('Location: index.php?page=login');
     exit;
 }
 
-// Rotas protegidas (exigem login)
+// 3. Rotas Protegidas (Exigem login ativo)
 if ($page === 'clientes') {
     $controller = new ClienteController();
     if ($action === 'cadastrar') $controller->cadastrar();

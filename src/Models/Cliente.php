@@ -9,38 +9,16 @@ class Cliente
 {
     public static function listarTodos() 
     {
-        $conn = Database::getConnection();
-        $stmt = $conn->prepare("SELECT * FROM clientes ORDER BY id DESC");
-        $stmt->execute();
-        return $stmt->fetchAll();
+        $db = Database::getConnection();
+        $stmt = $db->query("SELECT * FROM clientes ORDER BY id DESC");
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public static function buscarPorId($id) 
+    public static function cadastrar($nome, $cpf, $telefone, $email) 
     {
-        $conn = Database::getConnection();
-        $stmt = $conn->prepare("SELECT * FROM clientes WHERE id = :id");
-        $stmt->execute([':id' => $id]);
-        return $stmt->fetch();
-    }
-
-    public static function salvar($nome, $cpf, $telefone, $email) 
-    {
-        $conn = Database::getConnection();
-        $stmt = $conn->prepare("INSERT INTO clientes (nome, cpf, telefone, email) VALUES (:nome, :cpf, :telefone, :email)");
+        $db = Database::getConnection();
+        $stmt = $db->prepare("INSERT INTO clientes (nome, cpf, telefone, email) VALUES (:nome, :cpf, :telefone, :email)");
         return $stmt->execute([
-            ':nome'     => $nome,
-            ':cpf'      => $cpf,
-            ':telefone' => $telefone,
-            ':email'    => $email
-        ]);
-    }
-
-    public static function atualizar($id, $nome, $cpf, $telefone, $email) 
-    {
-        $conn = Database::getConnection();
-        $stmt = $conn->prepare("UPDATE clientes SET nome = :nome, cpf = :cpf, telefone = :telefone, email = :email WHERE id = :id");
-        return $stmt->execute([
-            ':id'       => $id,
             ':nome'     => $nome,
             ':cpf'      => $cpf,
             ':telefone' => $telefone,
@@ -50,8 +28,8 @@ class Cliente
 
     public static function excluir($id) 
     {
-        $conn = Database::getConnection();
-        $stmt = $conn->prepare("DELETE FROM clientes WHERE id = :id");
+        $db = Database::getConnection();
+        $stmt = $db->prepare("DELETE FROM clientes WHERE id = :id");
         return $stmt->execute([':id' => $id]);
     }
 }
