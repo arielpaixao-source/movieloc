@@ -9,15 +9,19 @@
 <body class="bg-light">
     <!-- Navbar de Navegação -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
-        <div class="container">
-            <a class="navbar-brand fw-bold" href="index.php">🎬 MovieLoc</a>
-            <div class="navbar-nav">
-                <a class="nav-link" href="index.php?page=filmes">Filmes</a>
-                <a class="nav-link" href="index.php?page=clientes">Clientes</a>
-                <a class="nav-link active" href="index.php?page=locacoes">Locações</a>
-            </div>
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="index.php">🎬 MovieLoc</a>
+        <div class="navbar-nav me-auto">
+            <a class="nav-link" href="index.php?page=filmes">Filmes</a>
+            <a class="nav-link" href="index.php?page=clientes">Clientes</a>
+            <a class="nav-link active" href="index.php?page=locacoes">Locações</a>
         </div>
-    </nav>
+        <div class="navbar-nav">
+            <span class="nav-link text-light me-2">Olá, <?= htmlspecialchars($_SESSION['usuario']['nome'] ?? '') ?></span>
+            <a class="btn btn-outline-danger btn-sm" href="index.php?page=logout">Sair</a>
+        </div>
+    </div>
+</nav>
 
     <div class="container my-4">
         <h1 class="mb-4 text-center text-primary">📑 MovieLoc - Gerenciamento de Locações</h1>
