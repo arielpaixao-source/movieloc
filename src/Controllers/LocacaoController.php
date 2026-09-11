@@ -26,27 +26,42 @@ class LocacaoController
     public function cadastrar() 
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $filme_id = $_POST['filme_id'] ?? null;
-            $cliente_id = $_POST['cliente_id'] ?? null;
-            $data_devolucao = $_POST['data_devolucao_prevista'] ?? null;
+            try {
+                $filme_id = $_POST['filme_id'] ?? null;
+                $cliente_id = $_POST['cliente_id'] ?? null;
+                $data_devolucao = $_POST['data_devolucao_prevista'] ?? null;
 
-            if ($filme_id && $cliente_id && $data_devolucao) {
+                if (empty($filme_id) || empty($cliente_id) || empty($data_devolucao)) {
+                    throw new \InvalidArgumentException("Filme, cliente e data são obrigatórios.");
+                }
+                if (strtotime($data_devolucao) < strtotime(date('Y-m-d'))) {
+                    throw new \InvalidArgumentException("Data de devolução não pode ser no passado.");
+                }
+
                 Locacao::salvar($filme_id, $cliente_id, $data_devolucao);
+                header('Location: index.php?page=locacoes');
+                exit;
+            } catch (\PDOException $e) {
+                die("Erro de banco ao registrar locação: " . htmlspecialchars($e->getMessage()));
+            } catch (\InvalidArgumentException $e) {
+                die("Erro de validação: " . htmlspecialchars($e->getMessage()));
             }
-            header('Location: index.php?page=locacoes');
-            exit;
         }
     }
 
     public function devolver() 
     {
-        $id = $_GET['id'] ?? null;
-        $filme_id = $_GET['filme_id'] ?? null;
+        try {
+            $id = $_GET['id'] ?? null;
+            $filme_id = $_GET['filme_id'] ?? null;
 
-        if ($id && $filme_id) {
-            Locacao::devolver($id, $filme_id);
+            if ($id && $filme_id) {
+                Locacao::devolver($id, $filme_id);
+            }
+            header('Location: index.php?page=locacoes');
+            exit;
+        } catch (\PDOException $e) {
+            die("Erro ao registrar devolução: " . htmlspecialchars($e->getMessage()));
         }
-        header('Location: index.php?page=locacoes');
-        exit;
     }
 }

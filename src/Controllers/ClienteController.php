@@ -15,42 +15,45 @@ class ClienteController
     public function cadastrar() 
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $nome = trim($_POST['nome'] ?? '');
-            $cpf = preg_replace('/[^0-9]/', '', $_POST['cpf'] ?? '');
-            $telefone = preg_replace('/[^0-9]/', '', $_POST['telefone'] ?? '');
-            $email = filter_var(trim($_POST['email'] ?? ''), FILTER_VALIDATE_EMAIL);
+            try {
+                $nome = trim($_POST['nome'] ?? '');
+                $cpf = preg_replace('/[^0-9]/', '', $_POST['cpf'] ?? '');
+                $telefone = preg_replace('/[^0-9]/', '', $_POST['telefone'] ?? '');
+                $email = filter_var(trim($_POST['email'] ?? ''), FILTER_VALIDATE_EMAIL);
 
-            // Validações no backend
-            if (strlen($nome) < 3 || strlen($nome) > 60) {
-                die("Erro: O nome deve ter entre 3 e 60 caracteres.");
+                if (strlen($nome) < 3 || strlen($nome) > 60) {
+                    die("Erro: O nome deve ter entre 3 e 60 caracteres.");
+                }
+                if (strlen($cpf) !== 11) {
+                    die("Erro: O CPF deve conter exatamente 11 dígitos numéricos.");
+                }
+                if (strlen($telefone) < 10 || strlen($telefone) > 11) {
+                    die("Erro: O telefone deve conter 10 ou 11 dígitos numéricos.");
+                }
+                if (!$email || strlen($email) > 80) {
+                    die("Erro: Insira um endereço de e-mail válido.");
+                }
+
+                Cliente::cadastrar($nome, $cpf, $telefone, $email);
+                header('Location: index.php?page=clientes');
+                exit;
+            } catch (\PDOException $e) {
+                die("Erro de banco ao cadastrar cliente: " . htmlspecialchars($e->getMessage()));
             }
-
-            if (strlen($cpf) !== 11) {
-                die("Erro: O CPF deve conter exatamente 11 dígitos numéricos.");
-            }
-
-            if (strlen($telefone) < 10 || strlen($telefone) > 11) {
-                die("Erro: O telefone deve conter 10 ou 11 dígitos numéricos.");
-            }
-
-            if (!$email || strlen($email) > 80) {
-                die("Erro: Insira um endereço de e-mail válido.");
-            }
-
-            // Executa o cadastro com os dados protegidos
-            Cliente::cadastrar($nome, $cpf, $telefone, $email);
-            header('Location: index.php?page=clientes');
-            exit;
         }
     }
 
     public function excluir() 
     {
-        $id = $_GET['id'] ?? null;
-        if ($id) {
-            Cliente::excluir($id);
+        try {
+            $id = $_GET['id'] ?? null;
+            if ($id) {
+                Cliente::excluir($id);
+            }
+            header('Location: index.php?page=clientes');
+            exit;
+        } catch (\PDOException $e) {
+            die("Erro ao excluir cliente: " . htmlspecialchars($e->getMessage()));
         }
-        header('Location: index.php?page=clientes');
-        exit;
     }
 }

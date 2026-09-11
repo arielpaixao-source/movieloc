@@ -25,7 +25,7 @@
                         <?php endif; ?>
 
                         <?php if (!empty($erro)): ?>
-                            <div class="alert alert-danger"><?= $erro ?></div>
+                            <div class="alert alert-danger"><?= htmlspecialchars($erro) ?></div>
                         <?php endif; ?>
 
                         <form action="index.php?page=login" method="POST">
