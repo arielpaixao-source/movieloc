@@ -20,7 +20,7 @@
                         <h3 class="text-center text-primary mb-4">🎬 Criar Conta</h3>
 
                         <?php if (!empty($erro)): ?>
-                            <div class="alert alert-danger"><?= $erro ?></div>
+                            <div class="alert alert-danger"><?= htmlspecialchars($erro) ?></div>
                         <?php endif; ?>
 
                         <form action="index.php?page=registrar" method="POST">

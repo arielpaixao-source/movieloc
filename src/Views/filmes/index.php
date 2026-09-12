@@ -62,11 +62,11 @@
                     </div>
                     <div class="col-md-3">
                         <label class="form-label fw-semibold">Ano</label>
-                        <input type="number" name="ano" class="form-control" required placeholder="1999" min="1900" max="<?= date('Y') ?>">
+                        <input type="number" name="ano_lancamento" class="form-control" required placeholder="1999" min="1900" max="<?= date('Y') ?>">
                     </div>
                     <div class="col-md-3">
                         <label class="form-label fw-semibold">Preço Locação (R$)</label>
-                        <input type="number" step="0.01" name="preco" class="form-control" required placeholder="9.90">
+                        <input type="number" step="0.01" name="preco_locacao" class="form-control" required placeholder="9.90">
                     </div>
                     <div class="col-12 text-end">
                         <button type="submit" class="btn btn-success px-4 fw-semibold">
@@ -111,10 +111,12 @@
                                         <td><?= htmlspecialchars($ano) ?></td>
                                         <td>R$ <?= number_format((float)$preco, 2, ',', '.') ?></td>
                                         <td>
-                                            <?php if (($filme['status'] ?? '') === 'Alugado'): ?>
+                                            <?php if (($filme['status'] ?? '') === 'alugado'): ?>
                                                 <span class="badge bg-warning text-dark">Alugado</span>
-                                            <?php else: ?>
+                                            <?php elseif (($filme['status'] ?? '') === 'disponivel'): ?>
                                                 <span class="badge bg-success">Disponível</span>
+                                            <?php else: ?>
+                                                <span class="badge bg-secondary"><?= htmlspecialchars($filme['status'] ?? '—') ?></span>
                                             <?php endif; ?>
                                         </td>
                                         <td class="text-end pe-3">

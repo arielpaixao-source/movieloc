@@ -116,15 +116,17 @@
                                         <td><?= date('d/m/Y H:i', strtotime($locacao['data_locacao'])) ?></td>
                                         <td><?= date('d/m/Y', strtotime($locacao['data_devolucao_prevista'])) ?></td>
                                         <td>
-                                            <?php if (($locacao['status'] ?? '') === 'Devolvido'): ?>
+                                            <?php if (($locacao['status'] ?? '') === 'concluida'): ?>
                                                 <span class="badge bg-success">Devolvido</span>
+                                            <?php elseif (($locacao['status'] ?? '') === 'atrasada'): ?>
+                                                <span class="badge bg-warning text-dark">Atrasada</span>
                                             <?php else: ?>
                                                 <span class="badge bg-danger">Em Aberto</span>
                                             <?php endif; ?>
                                         </td>
                                         <td class="text-end pe-3">
-                                            <?php if (($locacao['status'] ?? '') !== 'Devolvido'): ?>
-                                                <a href="index.php?page=locacoes&action=devolver&id=<?= $locacao['id'] ?>" class="btn btn-success btn-sm fw-semibold">
+                                            <?php if (($locacao['status'] ?? '') !== 'concluida'): ?>
+                                                <a href="index.php?page=locacoes&action=devolver&id=<?= $locacao['id'] ?>&filme_id=<?= $locacao['filme_id'] ?>" class="btn btn-success btn-sm fw-semibold" onclick="return confirm('Confirmar devolução?')">
                                                     Registrar Devolução
                                                 </a>
                                             <?php endif; ?>
